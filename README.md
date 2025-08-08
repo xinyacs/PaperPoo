@@ -27,7 +27,7 @@
 <div align="center">
 
 ### 🏠 Home Interface
-![PaperPoo Home](https://via.placeholder.com/800x500/4FC08D/FFFFFF?text=PaperPoo+Home+Interface)
+![PaperPoo Home](https://github.com/xinyacs/PaperPoo/blob/main/screenshot/screen.png)
 
 </div>
 
