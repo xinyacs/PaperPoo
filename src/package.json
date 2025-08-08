@@ -1,0 +1,24 @@
+{
+  "name": "roast-my-paper-vue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@google/genai": "^1.13.0",
+    "axios": "^1.11.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "vue": "^3.4.0",
+    "vue-i18n": "^9.14.5",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "vite": "^6.2.0"
+  }
+}
