@@ -56,7 +56,21 @@
 
         <!-- 分析结果 -->
         <div v-else-if="analysisResult">
-          <div ref="resultsRef" class="space-y-6 sm:space-y-8 lg:space-y-10 bg-gray-900/80 backdrop-blur-sm p-6 sm:p-8 lg:p-10 rounded-2xl border border-gray-700/50">
+          <div ref="resultsRef" class="relative space-y-6 sm:space-y-8 lg:space-y-10 bg-gray-900/80 backdrop-blur-sm p-6 sm:p-8 lg:p-10 rounded-2xl border border-gray-700/50">
+            <!-- PaperPoo 品牌标识 -->
+            <div class="w-full mb-4">
+              <div class="bg-gradient-to-br from-pink-500/15 via-purple-500/15 to-indigo-500/15 backdrop-blur-sm border border-pink-400/20 rounded-xl px-4 py-3 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="text-center">
+                  <div class="text-xl sm:text-2xl font-black leading-tight" style="color: #f472b6; text-shadow: 0 0 10px rgba(244, 114, 182, 0.3);">
+                    PaperPoo
+                  </div>
+                  <div class="text-sm sm:text-base font-medium mt-1" style="color: #f9a8d4;">
+                    https://pp.airesource.tech/
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- 摘要 -->
             <ResultCard :title="analysisResult.summary.title">
               <template #icon>
@@ -146,7 +160,6 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import LoadingProgress from '../components/LoadingProgress.vue'
 import { getAnalysisResult } from '../services/apiService.js'
@@ -155,6 +168,7 @@ import ResultCard from '../components/ResultCard.vue'
 import ScoreCard from '../components/ScoreCard.vue'
 import IconSummary from '../components/icons/IconSummary.vue'
 import IconProblems from '../components/icons/IconProblems.vue'
+import { exportOptimizedPdf, compressCanvasImage, getOptimizedHtml2CanvasConfig } from '../utils/pdfOptimizer.js'
 import IconSuggestions from '../components/icons/IconSuggestions.vue'
 
 export default {
@@ -354,14 +368,14 @@ export default {
       const elementToCapture = resultsRef.value
 
       try {
-        const canvas = await html2canvas(elementToCapture, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#111827', // bg-gray-900
-        })
-
         if (format === 'png') {
-          const image = canvas.toDataURL('image/png', 1.0)
+          // PNG导出优化
+          const canvas = await html2canvas(elementToCapture, getOptimizedHtml2CanvasConfig({
+            scale: 1.2, // PNG可以稍高一点分辨率
+            backgroundColor: '#111827'
+          }))
+
+          const image = compressCanvasImage(canvas, 'png', 0.8)
           const link = document.createElement('a')
           link.href = image
           link.download = `paper-analysis-${Date.now()}.png`
@@ -369,14 +383,17 @@ export default {
           link.click()
           document.body.removeChild(link)
         } else { // pdf
-          const imgData = canvas.toDataURL('image/png')
-          const pdf = new jsPDF({
-            orientation: 'p',
-            unit: 'px',
-            format: [canvas.width, canvas.height]
-          })
-          pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height)
-          pdf.save(`paper-analysis-${Date.now()}.pdf`)
+          // 使用优化的PDF导出 - 保持原始宽度，无边距，不分页
+          await exportOptimizedPdf(
+            elementToCapture,
+            `paper-analysis-${Date.now()}.pdf`,
+            {
+              preset: 'HIGH_QUALITY', // 使用低质量预设以减少文件大小
+              canvas: {
+                backgroundColor: '#111827'
+              }
+            }
+          )
         }
       } catch (e) {
         console.error('Export error:', e)

@@ -143,8 +143,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import LoadingProgress from '../components/LoadingProgress.vue'
 import FileUpload from '../components/FileUpload.vue'
@@ -154,6 +152,7 @@ import ResultCard from '../components/ResultCard.vue'
 import ScoreCard from '../components/ScoreCard.vue'
 import IconSummary from '../components/icons/IconSummary.vue'
 import IconProblems from '../components/icons/IconProblems.vue'
+import { exportOptimizedPdf } from '../utils/pdfOptimizer.js'
 import IconSuggestions from '../components/icons/IconSuggestions.vue'
 
 export default {
@@ -328,34 +327,17 @@ export default {
 
       isExporting.value = true
       try {
-        const canvas = await html2canvas(resultsRef.value, {
-          backgroundColor: '#111827',
-          scale: 2,
-          useCORS: true,
-          allowTaint: true
-        })
-
-        const imgData = canvas.toDataURL('image/png')
-        const pdf = new jsPDF('p', 'mm', 'a4')
-
-        const imgWidth = 210
-        const pageHeight = 295
-        const imgHeight = (canvas.height * imgWidth) / canvas.width
-        let heightLeft = imgHeight
-
-        let position = 0
-
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
-
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight
-          pdf.addPage()
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-          heightLeft -= pageHeight
-        }
-
-        pdf.save('paper-analysis-result.pdf')
+        // 使用优化的PDF导出 - 保持原始宽度，无边距，不分页
+        await exportOptimizedPdf(
+          resultsRef.value,
+          'paper-analysis-result.pdf',
+          {
+            preset: 'HIGH_QUALITY', // 使用低质量预设以减少文件大小
+            canvas: {
+              backgroundColor: '#111827'
+            }
+          }
+        )
       } catch (e) {
         console.error('Export error:', e)
         error.value = t('error.export')
