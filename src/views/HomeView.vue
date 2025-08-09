@@ -265,9 +265,8 @@ export default {
 
             // 立即导航，不等待 DOM 更新
             try {
-              const timer = measureNavigationTime()
+              console.log('Starting navigation to result page...')
               await router.replace(`/${locale}/result=${analysisHash.value}`)
-              timer.end()
               console.log('Navigation completed successfully')
             } catch (navError) {
               console.error('Navigation error:', navError)

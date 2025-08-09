@@ -11,7 +11,7 @@
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5.18-4FC08D?logo=vue.js)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.0.6-646CFF?logo=vite)](https://vitejs.dev/)
 
-[🌟 Star us on GitHub](https://github.com/xinyacs/paperpoo) • [📖 Documentation](https://github.com/xinyacs/paperpoo/wiki) • [🐛 Report Bug](https://github.com/xinyacs/paperpoo/issues) • [💡 Request Feature](https://github.com/xinyacs/paperpoo/issues)
+[🌟 Star us on GitHub](https://github.com/xinyacs/paperpoo) • [📖 Documentation](https://github.com/xinyacs/paperpoo/wiki) • [🐛 Report Bug](https://github.com/xinyacs/paperpoo/issues) • [💡 Online Demo](https://pp.airesource.tech/)
 
 </div>
 
